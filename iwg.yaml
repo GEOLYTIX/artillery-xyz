@@ -1,0 +1,14 @@
+config:
+  target: "https://geolytix.dev/iwg"
+  phases:
+    - arrivalRate: 5
+      duration: 30
+  engines:
+    xyz: {}
+scenarios:
+  - name: "Testing out the Demographics Layer"
+    engine: xyz
+    flow:
+      - testMVT:
+          api: "/api/layer/mvt"
+          params: "?locale=global&layer=demographics_grid&srid=3857&table=data.demographics"

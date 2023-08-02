@@ -1,0 +1,25 @@
+{
+  "name": "artillery-engine-xyz",
+  "version": "0.0.1",
+  "description": "Artillery for XYZ",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "keywords": [
+    "artillery",
+    "engine",
+    "load"
+  ],
+  "author": "Rob Hurst",
+  "license": "MPL-2.0",
+  "devDependencies": {
+    "tape": "^5.6.1"
+  },
+  "dependencies": {
+    "async": "^3.2.4",
+    "debug": "^4.3.4",
+    "dotenv": "^16.3.1",
+    "node-fetch": "^3.3.2"
+  }
+}
