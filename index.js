@@ -102,7 +102,7 @@ class ArtilleryXYZEngine {
       return function example(context, callback) {
 
         //console.log('target is:', self.target);
-        var countryArray = rs.testMVT.regions 
+        var countryArray = rs.testMVT.regions
         var country = countryArray[Math.floor(Math.random() * countryArray.length)];
 
         const tileCoords = getRandomTileForCountry(country)
@@ -145,36 +145,61 @@ class ArtilleryXYZEngine {
     }
 
     function lat2tile(lat, zoom) {
+      if (lat >= 90 || lat <= -90) {
+        console.error('Invalid latitude value:', lat);
+        return null;
+      }
+
       return (Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * (2 ** zoom)));
     }
 
-    function randomTileForRegion(lat_min, lat_max, lon_min, lon_max, z_min = 11, z_max = 22) {
+
+    function randomTileForRegion(lat_min, lat_max, lon_min, lon_max, z_min = rs.testMVT.minZoom, z_max = rs.testMVT.maxZoom) {
+      lat_min = ensureValidLatitude(lat_min);
+      lat_max = ensureValidLatitude(lat_max);
+  
       const z = getRandomInt(z_min, z_max);
       const x_min = long2tile(lon_min, z);
       const x_max = long2tile(lon_max, z);
       const y_min = lat2tile(lat_max, z);  // Notice we swap lat_max and lat_min here because of how tile y increases downwards
       const y_max = lat2tile(lat_min, z);
-
+      
       const x = getRandomInt(x_min, x_max);
       const y = getRandomInt(y_min, y_max);
       return { x, y, z };
-    }
+  }
+  
 
     function getRandomTileForCountry(countryName) {
       const country = countries[countryName];
-      
+
       if (!country || !country.extent) {
-          console.error(`No extent data available for ${countryName}`);
-          return null;
+        console.error(`No extent data available for ${countryName}`);
+        return null;
       }
-      
+
       return randomTileForRegion(
-          country.extent.south,
-          country.extent.north,
-          country.extent.west,
-          country.extent.east
+        country.extent.south,
+        country.extent.north,
+        country.extent.west,
+        country.extent.east
       );
-  }
+    }
+
+    function ensureValidLatitude(lat) {
+      const MIN_LAT = -89.9;
+      const MAX_LAT = 89.9;
+
+      if (lat < MIN_LAT) {
+        console.warn(`Latitude ${lat} is too low. Adjusting to ${MIN_LAT}`);
+        return MIN_LAT;
+      } else if (lat > MAX_LAT) {
+        console.warn(`Latitude ${lat} is too high. Adjusting to ${MAX_LAT}`);
+        return MAX_LAT;
+      }
+      return lat;
+    }
+
     //
     // Ignore any unrecognized actions:
     //
