@@ -118,7 +118,8 @@ class ArtilleryXYZEngine {
 
         fetch(url)
           .then((res) => {
-            if (!res.ok) {
+
+            if (res.status <= 200) {
               throw new Error(`HTTP error! status: ${res.status}`);
             }
             return res.text(); // or res.json() if you're expecting JSON
