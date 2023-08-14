@@ -4,6 +4,7 @@
 
 const A = require('async');
 const debug = require('debug')('engine:artilleryXYZ');
+const countries = require('./country.json');
 require('dotenv').config();
 
 class ArtilleryXYZEngine {
@@ -99,21 +100,21 @@ class ArtilleryXYZEngine {
     //
     if (rs.testMVT) {
       return function example(context, callback) {
-        
-        console.log('target is:', self.target);
+
+        //console.log('target is:', self.target);
+        var countryArray = rs.testMVT.regions 
+        var country = countryArray[Math.floor(Math.random() * countryArray.length)];
+
+        const tileCoords = getRandomTileForCountry(country)
+        //const tileCoords = randomTileForRegion(45, 62, -11, 6);
+        console.log(country);
+        console.log(tileCoords);
 
         // Emit a metric to count the number of example actions performed:
         ee.emit('counter', 'example.action_count', 1);
 
-        const z = Math.floor(Math.random() * 16);
-
-        const maxTileNum = Math.pow(2, z);
-
-        const x = Math.floor(Math.random() * maxTileNum);
-        const y = Math.floor(Math.random() * maxTileNum);
-
         // Build the URL
-        const url = `${self.target}${rs.testMVT.api}/${z}/${x}/${y}${rs.testMVT.params}&token=${process.env.KEY}`;
+        const url = `${self.target}${rs.testMVT.api}/${tileCoords.z}/${tileCoords.x}/${tileCoords.y}${rs.testMVT.params}&token=${process.env.KEY}`;
 
         fetch(url)
           .then((res) => {
@@ -132,8 +133,48 @@ class ArtilleryXYZEngine {
             callback(error, context);
           });
       };
-    }        
+    }
 
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    // Utility function to get tile coords from latitude and longitude
+    function long2tile(lon, zoom) {
+      return (Math.floor((lon + 180) / 360 * (2 ** zoom)));
+    }
+
+    function lat2tile(lat, zoom) {
+      return (Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * (2 ** zoom)));
+    }
+
+    function randomTileForRegion(lat_min, lat_max, lon_min, lon_max, z_min = 11, z_max = 22) {
+      const z = getRandomInt(z_min, z_max);
+      const x_min = long2tile(lon_min, z);
+      const x_max = long2tile(lon_max, z);
+      const y_min = lat2tile(lat_max, z);  // Notice we swap lat_max and lat_min here because of how tile y increases downwards
+      const y_max = lat2tile(lat_min, z);
+
+      const x = getRandomInt(x_min, x_max);
+      const y = getRandomInt(y_min, y_max);
+      return { x, y, z };
+    }
+
+    function getRandomTileForCountry(countryName) {
+      const country = countries[countryName];
+      
+      if (!country || !country.extent) {
+          console.error(`No extent data available for ${countryName}`);
+          return null;
+      }
+      
+      return randomTileForRegion(
+          country.extent.south,
+          country.extent.north,
+          country.extent.west,
+          country.extent.east
+      );
+  }
     //
     // Ignore any unrecognized actions:
     //
