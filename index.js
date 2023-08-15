@@ -191,10 +191,10 @@ class ArtilleryXYZEngine {
       const MAX_LAT = 89.9;
 
       if (lat < MIN_LAT) {
-        console.warn(`Latitude ${lat} is too low. Adjusting to ${MIN_LAT}`);
+        //console.warn(`Latitude ${lat} is too low. Adjusting to ${MIN_LAT}`);
         return MIN_LAT;
       } else if (lat > MAX_LAT) {
-        console.warn(`Latitude ${lat} is too high. Adjusting to ${MAX_LAT}`);
+        //console.warn(`Latitude ${lat} is too high. Adjusting to ${MAX_LAT}`);
         return MAX_LAT;
       }
       return lat;
