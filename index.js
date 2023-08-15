@@ -107,8 +107,8 @@ class ArtilleryXYZEngine {
 
         const tileCoords = getRandomTileForCountry(country)
         //const tileCoords = randomTileForRegion(45, 62, -11, 6);
-        console.log(country);
-        console.log(tileCoords);
+        //console.log(country);
+        //console.log(tileCoords);
 
         // Emit a metric to count the number of example actions performed:
         ee.emit('counter', 'example.action_count', 1);
@@ -118,8 +118,7 @@ class ArtilleryXYZEngine {
 
         fetch(url)
           .then((res) => {
-
-            if (res.status <= 200) {
+            if (!res.ok) {
               throw new Error(`HTTP error! status: ${res.status}`);
             }
             return res.text(); // or res.json() if you're expecting JSON
@@ -147,7 +146,7 @@ class ArtilleryXYZEngine {
 
     function lat2tile(lat, zoom) {
       if (lat >= 90 || lat <= -90) {
-        console.error('Invalid latitude value:', lat);
+        //console.error('Invalid latitude value:', lat);
         return null;
       }
 
