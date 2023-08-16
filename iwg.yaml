@@ -3,6 +3,8 @@ config:
   phases:
     - arrivalRate: 10
       duration: 60
+    - arrivalRate: 20
+      duration: 60
   engines:
     xyz: {}
 scenarios:

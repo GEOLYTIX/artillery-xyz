@@ -115,6 +115,7 @@ class ArtilleryXYZEngine {
 
           // Build the URL
           const url = `${self.target}${rs.testMVT.api}/${tileCoords.z}/${tileCoords.x}/${tileCoords.y}${rs.testMVT.params}&token=${process.env.KEY}`;
+          ee.emit('counter', `${self.target}:${rs.testMVT.name}`, 1);
 
           fetch(url)
             .then((res) => {
