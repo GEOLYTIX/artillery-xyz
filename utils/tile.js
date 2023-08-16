@@ -23,7 +23,7 @@ function getRandomInt(min, max) {
     const z = getRandomInt(z_min, z_max);
     const x_min = long2tile(lon_min, z);
     const x_max = long2tile(lon_max, z);
-    const y_min = lat2tile(lat_max, z);  // Notice we swap lat_max and lat_min here because of how tile y increases downwards
+    const y_min = lat2tile(lat_max, z);
     const y_max = lat2tile(lat_min, z);
 
     const x = getRandomInt(x_min, x_max);
