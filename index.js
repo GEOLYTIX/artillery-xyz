@@ -99,40 +99,42 @@ class ArtilleryXYZEngine {
     // This is our custom action:
     //
     if (rs.testMVT) {
-      return function example(context, callback) {
+      var countryArray = rs.testMVT.regions
+      var country = countryArray[Math.floor(Math.random() * countryArray.length)];
 
-        //console.log('target is:', self.target);
-        var countryArray = rs.testMVT.regions
-        var country = countryArray[Math.floor(Math.random() * countryArray.length)];
+      for (let i = 0; i < rs.testMVT.noRequests; i++) {
+        return function testMVT(context, callback) {
 
-        const tileCoords = getRandomTileForCountry(country)
-        //const tileCoords = randomTileForRegion(45, 62, -11, 6);
-        //console.log(country);
-        //console.log(tileCoords);
+          //console.log('target is:', self.target);
+          const tileCoords = getRandomTileForCountry(country)
+          //const tileCoords = randomTileForRegion(45, 62, -11, 6);
+          //console.log(country);
+          //console.log(tileCoords);
 
-        // Emit a metric to count the number of example actions performed:
-        ee.emit('counter', 'example.action_count', 1);
+          // Emit a metric to count the number of example actions performed:
+          ee.emit('counter', 'mvtTest.action_count', 1);
 
-        // Build the URL
-        const url = `${self.target}${rs.testMVT.api}/${tileCoords.z}/${tileCoords.x}/${tileCoords.y}${rs.testMVT.params}&token=${process.env.KEY}`;
+          // Build the URL
+          const url = `${self.target}${rs.testMVT.api}/${tileCoords.z}/${tileCoords.x}/${tileCoords.y}${rs.testMVT.params}&token=${process.env.KEY}`;
 
-        fetch(url)
-          .then((res) => {
-            if (!res.ok) {
-              throw new Error(`HTTP error! status: ${res.status}`);
-            }
-            return res.text(); // or res.json() if you're expecting JSON
-          })
-          .then((data) => {
-            // Handle your data here
-            //console.log(data);
-            callback(null, context);
-          })
-          .catch((error) => {
-            console.error(error);
-            callback(error, context);
-          });
-      };
+          fetch(url)
+            .then((res) => {
+              if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+              }
+              return res.text(); // or res.json() if you're expecting JSON
+            })
+            .then((data) => {
+              // Handle your data here
+              //console.log(data);
+              callback(null, context);
+            })
+            .catch((error) => {
+              console.error(error);
+              callback(error, context);
+            });
+        };
+      }
     }
 
     function getRandomInt(min, max) {
@@ -157,18 +159,18 @@ class ArtilleryXYZEngine {
     function randomTileForRegion(lat_min, lat_max, lon_min, lon_max, z_min = rs.testMVT.minZoom, z_max = rs.testMVT.maxZoom) {
       lat_min = ensureValidLatitude(lat_min);
       lat_max = ensureValidLatitude(lat_max);
-  
+
       const z = getRandomInt(z_min, z_max);
       const x_min = long2tile(lon_min, z);
       const x_max = long2tile(lon_max, z);
       const y_min = lat2tile(lat_max, z);  // Notice we swap lat_max and lat_min here because of how tile y increases downwards
       const y_max = lat2tile(lat_min, z);
-      
+
       const x = getRandomInt(x_min, x_max);
       const y = getRandomInt(y_min, y_max);
       return { x, y, z };
-  }
-  
+    }
+
 
     function getRandomTileForCountry(countryName) {
       const country = countries[countryName];
