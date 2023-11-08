@@ -137,14 +137,90 @@ class ArtilleryXYZEngine {
       }
     }
 
+    if (rs.testWorkspace) {
+
+      return async function testWorkspace() {
+        const localesURL = `${self.target}/api/workspace/locales?token=${process.env.KEY}`;
+
+        // Emit a metric to count the number of example actions performed:
+        ee.emit('counter', 'workspaceTest.action_count', 1);
+
+        let locales;
+
+        await fetch(localesURL)
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.text(); // or res.json() if you're expecting JSON
+          })
+          .then((data) => {
+            // Handle your data here
+            locales = JSON.parse(data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+          ee.emit('counter', 'workspaceTest.request_count', 1);
+
+        try {
+          const randomIndex = Math.floor(Math.random() * locales.length);
+          let randomLocale = locales[randomIndex];
+
+          let localeURL = `${self.target}/api/workspace/locale?locale=${randomLocale.key}&token=${process.env.KEY}`;
+          let locale;
+
+          await fetch(localeURL).then((res) => {
+            if (!res.ok) {
+              throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.text(); // or res.json() if you're expecting JSON
+          }).then((data) => {
+            // Handle your data here
+            locale = JSON.parse(data);
+          })
+            .catch((error) => {
+              console.error(error);
+            });
+
+            ee.emit('counter', 'workspaceTest.request_count', 1);
+
+          locale.layers.forEach(async layer => {
+
+            var layerURL = `${self.target}/api/workspace/layer?locale=${randomLocale.key}&layer=${layer}&token=${process.env.KEY}`;
+
+            await fetch(layerURL).then((res) => {
+              if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+              }
+              return res.text(); // or res.json() if you're expecting JSON
+            }).then((data) => {
+              // Handle your data here
+              //console.log(JSON.parse(data));
+            })
+              .catch((error) => {
+                console.error(error);
+              });
+
+              ee.emit('counter', 'workspaceTest.request_count', 1);
+          });
+
+        } catch (e) {
+          console.log(e);
+        }
+
+      }
+    }
+
     function getRandomTileForCountry(countryName) {
       const country = countries[countryName];
-  
+
       if (!country || !country.extent) {
         console.error(`No extent data available for ${countryName}`);
         return null;
       }
-  
+
       return randomTileForRegion(
         country.extent.south,
         country.extent.north,
@@ -155,8 +231,8 @@ class ArtilleryXYZEngine {
       );
     }
 
-    if(rs.testWKT){
-      return function testWKT(context, callback){
+    if (rs.testWKT) {
+      return function testWKT(context, callback) {
 
       };
     }

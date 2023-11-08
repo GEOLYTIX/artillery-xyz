@@ -1,0 +1,15 @@
+config:
+  target: "https://geolytix.dev/iwg"
+  phases:
+    - arrivalRate: 10
+      duration: 60
+    - arrivalRate: 20
+      duration: 60
+  engines:
+    xyz: {}
+scenarios:
+  - name: "Testing out the IWG Workspace"
+    engine: xyz
+    flow:
+      - testWorkspace:
+          name: 'Test IWG Workspace'
