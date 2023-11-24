@@ -1,0 +1,21 @@
+config:
+  target: "https://dev-aurora-test.vercel.app/aurora"
+  phases:
+    - arrivalRate: 10
+      duration: 60
+    - arrivalRate: 20
+      duration: 60
+  engines:
+    xyz: {}
+scenarios:
+  - name: "Testing out the Global Locale"
+    engine: xyz
+    flow:
+      - testMVT:
+          name: 'Test Demographics'
+          api: "/api/query?template=mvt"
+          minZoom: 11
+          maxZoom: 22
+          noRequests: 10
+          params: "&locale=United%20Kingdom&layer=demographics_grid&srid=3857&table=data.demographics"
+          regions: ['United Kingdom']
